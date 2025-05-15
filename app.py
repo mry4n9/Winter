@@ -1,8 +1,11 @@
 import streamlit as st
-import openai
 import json
 from io import BytesIO
-import time # For potential delay in clearing progress
+import time  # For optional delay in progress clearing
+
+# OpenAI (new SDK usage)
+from openai import OpenAI
+from openai._exceptions import AuthenticationError, RateLimitError, InvalidRequestError
 
 # Import project modules
 from modules import utils, context_extraction, ai_summarization, transparency_report, excel_processing
@@ -80,14 +83,14 @@ def call_openai_for_ads(api_key: str, model_name: str, list_of_message_sets: lis
                 st.error(f"Failed to parse JSON for {channel_name} (API Call {i+1}): {e}. Response: {content}")
                 collected_ads.append({"Ad Name": f"Error_JSON_Parse_{channel_name}_{i+1}", "Headline": "JSON Parse Error"})
 
-        except openai.error.AuthenticationError:
+        except AuthenticationError:
             st.error("OpenAI API Key is invalid or not authorized. Halting ad generation for this channel.")
             progress_placeholder.empty()
             return collected_ads # Stop further calls for this channel
-        except openai.error.RateLimitError:
+        except RateLimitError:
             st.error(f"OpenAI API rate limit exceeded for {channel_name} (API Call {i+1}). Try again later.")
             collected_ads.append({"Ad Name": f"Error_RateLimit_{channel_name}_{i+1}", "Headline": "Rate Limit Error"})
-        except openai.error.InvalidRequestError as e:
+        except InvalidRequestError:
              st.error(f"OpenAI Invalid Request for {channel_name} (API Call {i+1}): {e}.")
              collected_ads.append({"Ad Name": f"Error_InvalidRequest_{channel_name}_{i+1}", "Headline": "Invalid Request Error"})
         except Exception as e:
