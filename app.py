@@ -21,7 +21,7 @@ def call_openai_for_ads(api_key: str, model_name: str, list_of_message_sets: lis
     for i, messages in enumerate(list_of_message_sets):
         st.write(f"Generating ad content for {channel_name} (Prompt {i+1}/{total_calls})...")
         try:
-            response = openai.ChatCompletion.create(
+            response = openai.OpenAI(api_key=api_key).chat.completions.create(
                 model=model_name,
                 messages=messages,
                 response_format={"type": "json_object"} # Requires newer models
