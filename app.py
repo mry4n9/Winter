@@ -176,7 +176,6 @@ if generate_button:
     current_main_stage = 0
     
     def update_overall_progress(message=""):
-        nonlocal current_main_stage
         current_main_stage += 1
         progress_percentage = current_main_stage / total_main_stages
         overall_progress_bar.progress(progress_percentage, text=f"Overall Progress: {message}")
