@@ -1,5 +1,5 @@
 import streamlit as st
-import openai
+from openai import OpenAI
 
 # This function will be cached in app.py where it's called with specific inputs
 def summarize_text(text_to_summarize: str, api_key: str, model_name: str = "gpt-4.1-mini", target_chars: int = 2500) -> str:

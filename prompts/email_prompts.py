@@ -1,16 +1,15 @@
 from typing import List, Dict, Any
 
-def get_email_prompts_messages(url_context_sum: str, additional_context_sum: str,
+def get_email_prompts_messages(url_context_sum: str, additional_context_sum: str, 
                                lead_objective: str, book_link: str, content_count: int) -> List[List[Dict[str, str]]]:
     """
-    Generates a list containing ONE prompt messages list for email ad copy.
-    This single prompt will ask the AI to generate 'content_count' variations.
+    Generates a list containing a single prompt message set for generating multiple email ad variations.
     USER WILL MANUALLY EDIT THE PROMPT CONTENT.
     """
-   
     # This is a placeholder system prompt. User will edit.
-    base_system_prompt = "You are an expert marketing copywriter. Generate ad copy in JSON format. Ensure the JSON is valid and contains all requested fields."
+    base_system_prompt = "You are an expert marketing copywriter. Generate ad copy in JSON format. Ensure the JSON is valid and contains all requested fields. The output should be a single JSON object with a key 'ads' containing a list of ad variations."
 
+    # This is a placeholder user prompt. User will edit.
     user_prompt_content = f"""
     Task: Generate {content_count} unique email ad variations.
 
@@ -18,29 +17,35 @@ def get_email_prompts_messages(url_context_sum: str, additional_context_sum: str
     - URL Summary: {url_context_sum if url_context_sum else "Not provided."}
     - Additional Info Summary: {additional_context_sum if additional_context_sum else "Not provided."}
 
-    Campaign Details for all variations:
+    Campaign Details:
     - Funnel Stage: Demand Capture (This is fixed for emails as per spec)
     - Lead Objective: {lead_objective}
     - Booking Link (for CTA): {book_link}
 
     Output Format:
     Strictly adhere to the following JSON structure. Do NOT add any text before or after the JSON object.
-    The root key MUST be "email_ads" and its value MUST be a list of {content_count} JSON objects.
-    Each object in the list should represent one email ad variation.
-    Assign unique "Ad Name" for each variation (e.g., "Email_DemandCapture_Ver_1", "Email_DemandCapture_Ver_2", ...).
-
+    The "ads" list must contain exactly {content_count} email ad objects.
+    Each ad object should have a unique "Ad Name": "Email_DemandCapture_Ver_X".
     {{
-      "email_ads": [
-        // Example for one variation (repeat {content_count} times in the list):
+      "ads": [
+        // {content_count} email ad objects here, for example:
         {{
-          "Ad Name": "Email_Ad_Ver_1", // Ensure this is unique for each variation
+          "Ad Name": "Email_DemandCapture_Ver_1",
           "Funnel Stage": "Demand Capture",
-          "Headline": "Generated Headline Text for Ver 1",
-          "Subject Line": "Generated Subject Line Text for Ver 1",
-          "Body": "Generated Email Body Text for Ver 1. Should be compelling and lead to the CTA.",
-          "CTA": "Action-oriented text, e.g., '{lead_objective}' or similar, linking to {book_link}"
+          "Headline": "Generated Headline Text 1",
+          "Subject Line": "Generated Subject Line Text 1",
+          "Body": "Generated Email Body Text 1, start email with Hi [Name], use 2-3 paragraphs, embed {book_link} naturally in body.",
+          "CTA": "Action-oriented text for variation 1, e.g., '{lead_objective}' or similar"
+        }},
+        {{
+          "Ad Name": "Email_DemandCapture_Ver_2",
+          "Funnel Stage": "Demand Capture",
+          "Headline": "Generated Headline Text 2",
+          "Subject Line": "Generated Subject Line Text 2",
+          "Body": "Generated Email Body Text 2, start email with Hi [Name], use 2-3 paragraphs, embed {book_link} naturally in body.",
+          "CTA": "Action-oriented text for variation 2, e.g., '{lead_objective}' or similar"
         }}
-        // ... more variations if content_count > 1
+        // ... and so on, up to {content_count} variations
       ]
     }}
     """

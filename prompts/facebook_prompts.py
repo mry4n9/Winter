@@ -1,17 +1,17 @@
 from typing import List, Dict, Any
 
 def get_facebook_prompts_messages(url_context_sum: str, additional_context_sum: str, lead_magnet_sum: str,
-                                  learn_more_link: str, magnet_link: str, book_link: str,
+                                  learn_more_link: str, magnet_link: str, book_link: str, 
                                   lead_objective: str, content_count: int) -> List[List[Dict[str, str]]]:
     """
-    Generates a list of prompt messages for Facebook ad copy.
-    One prompt per funnel stage, each asking for 'content_count' variations.
+    Generates a list of prompt messages for Facebook ad copy, one message set per funnel stage.
+    Each message set requests 'content_count' variations for that stage.
     USER WILL MANUALLY EDIT THE PROMPT CONTENT.
     """
     all_prompts_messages: List[List[Dict[str, str]]] = []
     
     # This is a placeholder system prompt. User will edit.
-    base_system_prompt = "You are an expert marketing copywriter specializing in Facebook ads. Generate ad copy in JSON format. Ensure the JSON is valid and contains all requested fields."
+    base_system_prompt = "You are an expert marketing copywriter specializing in Facebook ads. Generate ad copy in JSON format. Ensure the JSON is valid and contains all requested fields. The output should be a single JSON object with a key 'ads' containing a list of ad variations for the specified funnel stage."
 
     funnel_stages_config = {
         "Brand Awareness": {
@@ -40,34 +40,42 @@ def get_facebook_prompts_messages(url_context_sum: str, additional_context_sum: 
         Task: Generate {content_count} unique Facebook ad variations for the '{stage_name}' funnel stage.
 
         Company Context:
-        - Primary Context for these ads: {config['primary_context']}
+        - Primary Context for this ad stage: {config['primary_context']}
         - Supporting Context: {config['secondary_context']}
 
-        Campaign Details for all variations in this batch:
+        Campaign Details (common for all variations in this request for this stage):
         - Funnel Stage: {stage_name}
         - Destination Link: {config['destination']}
         - CTA Button Text: {config['cta_button']}
 
         Output Format:
         Strictly adhere to the following JSON structure. Do NOT add any text before or after the JSON object.
-        The root key MUST be "facebook_ads" and its value MUST be a list of {content_count} JSON objects.
-        Each object in the list should represent one Facebook ad variation for the '{stage_name}' stage.
-        Assign unique "Ad Name" for each variation (e.g., "Facebook_{stage_name.replace(" ", "")}_Ver_1", ...).
-
+        The "ads" list must contain exactly {content_count} Facebook ad objects for the '{stage_name}' stage.
+        Each ad object should have a unique "Ad Name" like "Facebook_{stage_name.replace(" ", "")}_Ver_X".
         {{
-          "facebook_ads": [
-            // Example for one variation (repeat {content_count} times in the list):
+          "ads": [
+            // {content_count} Facebook ad objects here for {stage_name}, for example:
             {{
-              "Ad Name": "Facebook_{stage_name.replace(" ", "")}_Ver_1", // Ensure this is unique
+              "Ad Name": "Facebook_{stage_name.replace(" ", "")}_Ver_1",
               "Funnel Stage": "{stage_name}",
               "Primary Text": "Generated primary text for variation 1.",
-              "Image Copy": "Suggested text overlay or concept for variation 1 image/video.",
-              "Headline": "Generated headline for variation 1 (typically shown below image/video).",
-              "Link Description": "Generated link description for variation 1 (news feed link description).",
+              "Image Copy": "Suggested text overlay or concept for variation 1 image.",
+              "Headline": "Generated headline for variation 1 (typically shown below image).",
+              "Link Description": "Generated link description for variation 1.",
+              "Destination": "{config['destination']}",
+              "CTA Button": "{config['cta_button']}"
+            }},
+            {{
+              "Ad Name": "Facebook_{stage_name.replace(" ", "")}_Ver_2",
+              "Funnel Stage": "{stage_name}",
+              "Primary Text": "Generated primary text for variation 2.",
+              "Image Copy": "Suggested text overlay or concept for variation 2 image.",
+              "Headline": "Generated headline for variation 2 (typically shown below image).",
+              "Link Description": "Generated link description for variation 2.",
               "Destination": "{config['destination']}",
               "CTA Button": "{config['cta_button']}"
             }}
-            // ... more variations if content_count > 1
+            // ... and so on, up to {content_count} variations for this stage
           ]
         }}
         """
