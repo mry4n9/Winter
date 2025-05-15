@@ -1,0 +1,8 @@
+streamlit
+openai
+requests
+beautifulsoup4
+pdfplumber
+python-pptx
+python-docx
+openpyxl
