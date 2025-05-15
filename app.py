@@ -123,6 +123,8 @@ if 'output_generated' not in st.session_state:
 if 'run_id' not in st.session_state: # For unique progress bar keys if needed
     st.session_state.run_id = 0
 
+if 'current_step' not in st.session_state:
+    st.session_state.current_step = 0
 
 # --- Inputs ---
 st.header("1. Extract Company Context")
@@ -147,7 +149,8 @@ generate_button = st.button("🚀 Generate Ad Content & Report")
 st.markdown("---")
 
 if generate_button:
-    st.session_state.run_id += 1 # Increment run_id for unique keys
+    st.session_state.run_id += 1
+    st.session_state.current_step = 0 # Increment run_id for unique keys
     # --- Validation ---
     if not company_name:
         st.error("Company Name is required.")
@@ -173,13 +176,14 @@ if generate_button:
         # Main progress status for the whole generation process
         main_progress_text = "Starting generation process..."
         main_progress_bar = st.progress(0, text=main_progress_text)
-        total_steps = 6 # Extraction, Summarization, DOCX, Email, LI, FB, GSearch, GDisplay, XLSX (approx)
-        current_step = 0
+        total_steps = 6 # Total steps in the progress bar
 
         def update_main_progress(step_increment, text):
-            nonlocal current_step
-            current_step += step_increment
-            main_progress_bar.progress(current_step / total_steps, text=text)
+            st.session_state.current_step += step_increment
+            main_progress_bar.progress(
+                st.session_state.current_step / total_steps,
+                text=text
+            )
 
         with st.spinner("Overall process running... please wait."): # General spinner
             # --- 1. Context Extraction ---
