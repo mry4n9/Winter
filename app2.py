@@ -31,11 +31,11 @@ def call_openai_for_ads(api_key: str, model_name: str, list_of_message_sets: lis
 
 
         try:
-            response = openai.OpenAI(api_key=api_key).chat.completions.create(
-            model=model_name,
-            messages=messages,
-            response_format="json"
-        )
+            response = openai.ChatCompletion.create(
+                model=model_name,
+                messages=messages,
+                response_format={"type": "json_object"}
+            )
             content = response.choices[0].message.content.strip()
             
             try:
