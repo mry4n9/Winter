@@ -173,11 +173,11 @@ if generate_button:
     # Overall progress tracking
     # Adjusted total steps: Extraction(1), Summaries(1), Report(1), Ad Gen (5 channels, but fewer API calls)(1), Excel(1) = 5 main stages
     total_main_stages = 5 
-    current_main_stage = 0
+    current_main_stage = [0]
     
     def update_overall_progress(message=""):
-        current_main_stage += 1
-        progress_percentage = current_main_stage / total_main_stages
+        current_main_stage[0] += 1
+        progress_percentage = current_main_stage[0] / total_main_stages
         overall_progress_bar.progress(progress_percentage, text=f"Overall Progress: {message}")
 
     with status_messages_area: # Log messages within this container
